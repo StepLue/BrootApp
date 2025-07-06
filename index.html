@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Brotrezept-Editor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+
+    <!-- Rezeptname -->
+    <div class="itenm-head">
+      <label for="rezeptname">Name</label>
+      <input type="text" id="rezeptname" />
+    </div>
+    
+    <!-- Hauptkonfiguration -->
+    <fieldset class="fieldset-sidebar itenm-side">
+      <legend>Hauptkonfiguration</legend>
+      <div>
+        
+        <label for="teigeinlage">Teigeinlage in Gramm</label>
+        <input type="number" id="teigeinlage" />
+        <br>
+        <br>
+        <label>Anzahl Brote</label>
+        <input type="number" />
+        <br>
+        <br>
+        <label>Teigausbeute</label>
+        <input type="number" />
+        <br>
+        <br>
+        <label for="fuehrung">Führung</label>
+        <select id="fuehrung">
+          <option>Detmolder Einstufenführung</option>
+          <option selected>Detmolder Zweistufenführung</option>
+          <option>Mohnheimer Salzsauer</option>
+        </select>
+        <br>
+        <br>
+        <label>Roggen in %</label>
+        <input type="number" />
+        <br>
+        <br>
+        <label>Versäuerung in %</label>
+        <input type="number" />
+      </div>
+        <br>
+      <button class="right-panel">Berechnen</button>
+    </fieldset>
+
+    <!-- Infobereich -->
+    <div class="itenm-main">
+      <fieldset class="fieldset-design">
+        <legend>Infos</legend>
+        <div>Mehl gesamt:</div>
+        <div>wird berechnet</div>
+        <div>Wasser gesamt:</div>
+        <div>wird berechnet</div>
+        <div>Roggenmehl gesamt:</div>
+        <div>wird berechnet</div>
+      </fieldset>
+
+      <!-- Grundsauer (wird ein-/ausgeblendet) -->
+      <fieldset class="fieldset-design" id="grundsauer">
+        <legend>Grundsauer</legend>
+        <div><input type="text" placeholder="Temperatur und Zeit" /></div>
+        <div></div>
+        <div>Anstellgut:</div>
+        <div>wird berechnet</div>
+        <div>Roggenmehl:</div>
+        <div>wird berechnet</div>
+        <div>Wasser:</div>
+        <div>wird berechnet</div>
+      </fieldset>
+
+      <!-- Vollsauer -->
+      <fieldset class="fieldset-design">
+        <legend>Vollsauer</legend>
+        <div><input type="text" placeholder="Temperatur und Zeit" /></div>
+        <div></div>
+        <div>Anstellgut:</div>
+        <div>wird berechnet</div>
+        <div>Roggenmehl:</div>
+        <div>wird berechnet</div>
+        <div>Wasser:</div>
+        <div>wird berechnet</div>
+
+        <!-- Salzzeile (nur bei Mohnheimer sichtbar) -->
+        <div id="zeile-salz">
+          <div>Salz:</div>
+          <div>wird berechnet</div>
+        </div>
+      </fieldset>
+
+      <!-- Mengen Hauptrezept -->
+      <fieldset class="fieldset-design">
+        <legend>Mengen Hauptrezept</legend>
+        <div>Wasser Hauptrezept:</div>
+        <div>wird berechnet</div>
+        <div>Roggenmehl Hauptrezept:</div>
+        <div>wird berechnet</div>
+        <div>Weizenmehl Hauptrezept:</div>
+        <div>wird berechnet</div>
+      </fieldset>
+    </div>
+
+    <!-- Rezeptfelder -->
+    <fieldset class="itenm-main2 fieldset-sidebar">
+      <legend>Rezept</legend>
+      <div class="rezept-bereich">
+        <textarea class="rezept-links" placeholder="Rezeptbeschreibung"></textarea>
+        <textarea class="rezept-rechts" placeholder="Berechnung / Hinweise"></textarea>
+      </div>
+    </fieldset>
+
+    <!-- Buttons -->
+    <div class="itenm-footer">
+      <button>Rezept speichern</button>
+      <button>Rezept laden</button>
+      <button>Abbrechen</button>
+    </div>
+
+  </div>
+
+  <!-- JavaScript zur Anzeige der richtigen Felder -->
+  <script>
+    function toggleFelder() {
+      const fuehrung = document.getElementById("fuehrung").value;
+      const grundsauer = document.getElementById("grundsauer");
+      const zeileSalz = document.getElementById("zeile-salz");
+
+      // Grundsauer nur bei Zweistufenführung sichtbar
+      if (fuehrung === "Detmolder Zweistufenführung") {
+        grundsauer.style.removeProperty("display");
+      } else {
+        grundsauer.style.display = "none";
+      }
+
+      // Salzzeile nur bei Mohnheimer sichtbar
+      zeileSalz.style.display = (fuehrung === "Mohnheimer Salzsauer") ? "grid" : "none";
+    }
+
+    // Initial prüfen
+    toggleFelder();
+    // Auf Änderung reagieren
+    document.getElementById("fuehrung").addEventListener("change", toggleFelder);
+  </script>
+</body>
+</html>
