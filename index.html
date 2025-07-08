@@ -28,8 +28,8 @@
         <input type="number" />
         <br>
         <br>
-        <label>Teigausbeute</label>
-        <input type="number" />
+          <label>Teigausbeute</label>
+          <input type="number" id="teigausbeute" />
         <br>
         <br>
         <label for="fuehrung">Führung</label>
@@ -40,12 +40,12 @@
         </select>
         <br>
         <br>
-        <label>Roggen in %</label>
-        <input type="number" />
+        <label for="roggenanteil">Roggen in %</label>
+        <input type="number" id="roggenanteil" />
         <br>
         <br>
-        <label>Versäuerung in %</label>
-        <input type="number" />
+        <label for="versaeuerung">Versäuerung in %</label>
+        <input type="number" id="versaeuerung" />
       </div>
         <br>
       <button class="right-panel">Berechnen</button>
@@ -56,43 +56,42 @@
       <fieldset class="fieldset-design">
         <legend>Infos</legend>
         <div>Mehl gesamt:</div>
-        <div>wird berechnet</div>
+        <div id="mehl-gesamt">wird berechnet</div>
         <div>Wasser gesamt:</div>
-        <div>wird berechnet</div>
+        <div id="wasser-gesamt">wird berechnet</div>
         <div>Roggenmehl gesamt:</div>
-        <div>wird berechnet</div>
+        <div id="roggenmehl-gesamt">wird berechnet</div>
       </fieldset>
 
       <!-- Grundsauer (wird ein-/ausgeblendet) -->
       <fieldset class="fieldset-design" id="grundsauer">
         <legend>Grundsauer</legend>
         <div><input type="text" placeholder="Temperatur und Zeit" /></div>
-        <div></div>
+        <div><input type="text" id="ta-gs" placeholder="TA z.B. 200" /></div>
         <div>Anstellgut:</div>
-        <div>wird berechnet</div>
+        <div id="gs-anstellgut">wird berechnet</div>
         <div>Roggenmehl:</div>
-        <div>wird berechnet</div>
+        <div id="gs-roggenmehl">wird berechnet</div>
         <div>Wasser:</div>
-        <div>wird berechnet</div>
+        <div id="gs-wasser">wird berechnet</div>
       </fieldset>
 
-      <!-- Vollsauer -->
       <fieldset class="fieldset-design">
         <legend>Vollsauer</legend>
         <div><input type="text" placeholder="Temperatur und Zeit" /></div>
-        <div></div>
-        <div>Anstellgut:</div>
-        <div>wird berechnet</div>
+        <div><input type="text" id="ta-vs" placeholder="TA z.B. 260" /></div>
+        <div id="vs-anstellgut-label">Anstellgut:</div>
+        <div id="vs-anstellgut-wert">wird berechnet</div>
         <div>Roggenmehl:</div>
-        <div>wird berechnet</div>
+        <div id="vs-roggenmehl">wird berechnet</div>
         <div>Wasser:</div>
-        <div>wird berechnet</div>
+        <div id="vs-wasser">wird berechnet</div>
+      
 
         <!-- Salzzeile (nur bei Mohnheimer sichtbar) -->
-        <div id="zeile-salz">
-          <div>Salz:</div>
-          <div>wird berechnet</div>
-        </div>
+          <div id="zeile-salz-label">Salz:</div>
+          <div id="zeile-salz-wert">wird berechnet</div>
+        
       </fieldset>
 
       <!-- Mengen Hauptrezept -->
@@ -124,29 +123,107 @@
     </div>
 
   </div>
+  
 
-  <!-- JavaScript zur Anzeige der richtigen Felder -->
-  <script>
-    function toggleFelder() {
-      const fuehrung = document.getElementById("fuehrung").value;
-      const grundsauer = document.getElementById("grundsauer");
-      const zeileSalz = document.getElementById("zeile-salz");
 
-      // Grundsauer nur bei Zweistufenführung sichtbar
-      if (fuehrung === "Detmolder Zweistufenführung") {
-        grundsauer.style.removeProperty("display");
-      } else {
-        grundsauer.style.display = "none";
-      }
 
-      // Salzzeile nur bei Mohnheimer sichtbar
-      zeileSalz.style.display = (fuehrung === "Mohnheimer Salzsauer") ? "grid" : "none";
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const fuehrungSelect = document.getElementById("fuehrung");
+
+    const grundsauer = document.getElementById("grundsauer");
+    const vsAnstellgutLabel = document.getElementById("vs-anstellgut-label");
+    const vsAnstellgutWert = document.getElementById("vs-anstellgut-wert"); // ← du solltest hier den ID-Namen im HTML anpassen!
+    const zeileSalzLabel = document.getElementById("zeile-salz-label");
+    const zeileSalzWert = document.getElementById("zeile-salz-wert");
+
+function setVisible(el, sichtbar) {
+  if (!el) return;
+  if (sichtbar) {
+    el.style.display = el.classList.contains("fieldset-design") ? "grid" : "block";
+  } else {
+    el.style.display = "none";
+  }
+}
+
+    function aktualisiereSichtbarkeit() {
+      const fuehrung = fuehrungSelect.value;
+
+      // Grundsauer nur bei Zweistufenführung
+      setVisible(grundsauer, fuehrung === "Detmolder Zweistufenführung");
+
+      // Anstellgut nur bei Einstufen oder Mohnheimer sichtbar
+      const zeigeAnstellgut = 
+        fuehrung === "Detmolder Einstufenführung" || 
+        fuehrung === "Mohnheimer Salzsauer";
+      setVisible(vsAnstellgutLabel, zeigeAnstellgut);
+      setVisible(vsAnstellgutWert, zeigeAnstellgut);
+
+      // Salz nur bei Mohnheimer sichtbar
+      const zeigeSalz = fuehrung === "Mohnheimer Salzsauer";
+      setVisible(zeileSalzLabel, zeigeSalz);
+      setVisible(zeileSalzWert, zeigeSalz);
     }
 
-    // Initial prüfen
-    toggleFelder();
-    // Auf Änderung reagieren
-    document.getElementById("fuehrung").addEventListener("change", toggleFelder);
-  </script>
+    fuehrungSelect.addEventListener("change", aktualisiereSichtbarkeit);
+    aktualisiereSichtbarkeit(); // Initial beim Laden
+  });
+
+
+// berechnungen
+document.querySelector(".right-panel").addEventListener("click", function () {
+  const teigeinlage = parseFloat(document.getElementById("teigeinlage").value);
+  const teigausbeute = parseFloat(document.getElementById("teigausbeute").value);
+  const roggenanteil = parseFloat(document.getElementById("roggenanteil").value);
+  const versaeuerung = parseFloat(document.getElementById("versaeuerung").value);
+
+  if (isNaN(teigeinlage) || isNaN(teigausbeute) || isNaN(roggenanteil) || isNaN(versaeuerung)) {
+    alert("Bitte gib gültige Werte für Teigeinlage, Teigausbeute, Roggenanteil und Versäuerung ein.");
+    return;
+  }
+
+  // Gesamtmehl und Wasser
+  const mehlGesamt = teigeinlage * 100 / teigausbeute;
+  const wasserGesamt = teigeinlage - mehlGesamt;
+  const roggenmehlGesamt = mehlGesamt * (roggenanteil / 100);
+
+  // Versäuerung
+  const zvrm = roggenmehlGesamt * (versaeuerung / 100);
+  const grundsauerMehl = zvrm * 0.35;
+  const vollsauerMehl = zvrm * 0.65;
+
+  // Anstellgut im Grundsauer = 10 % von Grundsauer-Roggenmehl
+  const anstellgutGrundsauer = grundsauerMehl * 0.10;
+
+
+const taGrundsauer = parseFloat(document.getElementById("ta-gs").value);
+let wasserGrundsauer = 0;
+if (!isNaN(taGrundsauer) && taGrundsauer > 100) {
+  wasserGrundsauer = grundsauerMehl * (taGrundsauer - 100) / 100;
+}
+
+const taVollsauer = parseFloat(document.getElementById("ta-vs").value);
+let wasserVollsauer = 0;
+if (!isNaN(taVollsauer) && taVollsauer > 100) {
+  wasserVollsauer = vollsauerMehl * (taVollsauer - 100) / 100;
+}
+
+
+
+  // Anzeige aktualisieren
+  document.getElementById("mehl-gesamt").textContent = `${mehlGesamt.toFixed(1)} g`;
+  document.getElementById("wasser-gesamt").textContent = `${wasserGesamt.toFixed(1)} g`;
+  document.getElementById("roggenmehl-gesamt").textContent = `${roggenmehlGesamt.toFixed(1)} g`;
+
+  document.getElementById("gs-roggenmehl").textContent = `${grundsauerMehl.toFixed(1)} g`;
+  document.getElementById("vs-roggenmehl").textContent = `${vollsauerMehl.toFixed(1)} g`;
+  document.getElementById("gs-anstellgut").textContent = `${anstellgutGrundsauer.toFixed(1)} g`;
+document.getElementById("gs-wasser").textContent = `${wasserGrundsauer.toFixed(1)} g`;
+document.getElementById("vs-wasser").textContent = `${wasserVollsauer.toFixed(1)} g`;
+
+});
+</script>
+
+
 </body>
 </html>
