@@ -22,10 +22,7 @@
         
         <label for="teigeinlage">Teigeinlage in Gramm</label>
         <input type="number" id="teigeinlage" />
-        <br>
-        <br>
-        <label>Anzahl Brote</label>
-        <input type="number" />
+        
         <br>
         <br>
           <label>Teigausbeute</label>
@@ -48,7 +45,13 @@
         <input type="number" id="versaeuerung" />
       </div>
         <br>
-      <button class="right-panel">Berechnen</button>
+        <button class="berechnen">Berechnen</button>
+        <br>
+        <br>
+        <br>
+        <br>
+        <input type="number" id="anzahl" placeholder="Anzahl der Brote" />
+        <button class="werteUebernehmen">Werte in Rezept übernehmen</button>
     </fieldset>
 
     <!-- Infobereich -->
@@ -97,12 +100,14 @@
       <!-- Mengen Hauptrezept -->
       <fieldset class="fieldset-design">
         <legend>Mengen Hauptrezept</legend>
-        <div>Wasser Hauptrezept:</div>
-        <div>wird berechnet</div>
-        <div>Roggenmehl Hauptrezept:</div>
-        <div>wird berechnet</div>
-        <div>Weizenmehl Hauptrezept:</div>
-        <div>wird berechnet</div>
+        <div>Wasser:</div>
+        <div id="wasserHaupt">wird berechnet</div>
+        <div>Roggenmehl:</div>
+        <div id="roggenHaupt">wird berechnet</div>
+        <div>Weizenmehl:</div>
+        <div id="weizenHaupt">wird berechnet</div>
+        <div>Salz:</div>
+        <div id="salzHaupt">wird berechnet</div>
       </fieldset>
     </div>
 
@@ -110,7 +115,7 @@
     <fieldset class="itenm-main2 fieldset-sidebar">
       <legend>Rezept</legend>
       <div class="rezept-bereich">
-        <textarea class="rezept-links" placeholder="Rezeptbeschreibung"></textarea>
+        <textarea class="rezept-links" id="Text1" placeholder="Rezeptbeschreibung"></textarea>
         <textarea class="rezept-rechts" placeholder="Berechnung / Hinweise"></textarea>
       </div>
     </fieldset>
@@ -130,7 +135,6 @@
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const fuehrungSelect = document.getElementById("fuehrung");
-
     const grundsauer = document.getElementById("grundsauer");
     const vsAnstellgutLabel = document.getElementById("vs-anstellgut-label");
     const vsAnstellgutWert = document.getElementById("vs-anstellgut-wert"); // ← du solltest hier den ID-Namen im HTML anpassen!
@@ -170,12 +174,32 @@ function setVisible(el, sichtbar) {
   });
 
 
+
+  
+var teigeinlage;
+var teigausbeute;
+var roggenanteil;
+var versaeuerung;
+var anzahl;
+var anstellgutGrundsauer;
+var grundsauerMehl;
+var vollsauerMehl;
+var wasserGrundsauer;
+var wasserVollsauer;
+var WasserHaupt;
+var RoggenHaupt;
+var WeizenHaupt;
+var SalzHaupt;
+
+
 // berechnungen
-document.querySelector(".right-panel").addEventListener("click", function () {
-  const teigeinlage = parseFloat(document.getElementById("teigeinlage").value);
-  const teigausbeute = parseFloat(document.getElementById("teigausbeute").value);
-  const roggenanteil = parseFloat(document.getElementById("roggenanteil").value);
-  const versaeuerung = parseFloat(document.getElementById("versaeuerung").value);
+document.querySelector(".berechnen").addEventListener("click", function () {
+  
+  teigeinlage = parseFloat(document.getElementById("teigeinlage").value); 
+  teigausbeute = parseFloat(document.getElementById("teigausbeute").value); 
+  roggenanteil = parseFloat(document.getElementById("roggenanteil").value); 
+  versaeuerung = parseFloat(document.getElementById("versaeuerung").value); 
+  
 
   if (isNaN(teigeinlage) || isNaN(teigausbeute) || isNaN(roggenanteil) || isNaN(versaeuerung)) {
     alert("Bitte gib gültige Werte für Teigeinlage, Teigausbeute, Roggenanteil und Versäuerung ein.");
@@ -189,39 +213,69 @@ document.querySelector(".right-panel").addEventListener("click", function () {
 
   // Versäuerung
   const zvrm = roggenmehlGesamt * (versaeuerung / 100);
-  const grundsauerMehl = zvrm * 0.35;
-  const vollsauerMehl = zvrm * 0.65;
+  grundsauerMehl = zvrm * 0.35;
+  vollsauerMehl = zvrm * 0.65;
 
   // Anstellgut im Grundsauer = 10 % von Grundsauer-Roggenmehl
-  const anstellgutGrundsauer = grundsauerMehl * 0.10;
+  anstellgutGrundsauer = grundsauerMehl * 0.10;
 
 
 const taGrundsauer = parseFloat(document.getElementById("ta-gs").value);
-let wasserGrundsauer = 0;
+wasserGrundsauer = 0;
 if (!isNaN(taGrundsauer) && taGrundsauer > 100) {
   wasserGrundsauer = grundsauerMehl * (taGrundsauer - 100) / 100;
 }
 
 const taVollsauer = parseFloat(document.getElementById("ta-vs").value);
-let wasserVollsauer = 0;
+wasserVollsauer = 0;
 if (!isNaN(taVollsauer) && taVollsauer > 100) {
   wasserVollsauer = vollsauerMehl * (taVollsauer - 100) / 100;
 }
 
 
+// Hauptrezept berechnen
+  WasserHaupt = wasserGesamt - wasserVollsauer - wasserGrundsauer;
+  RoggenHaupt = roggenmehlGesamt - zvrm;
+  WeizenHaupt = mehlGesamt - roggenmehlGesamt;
+  SalzHaupt = mehlGesamt * 0.022;
 
   // Anzeige aktualisieren
   document.getElementById("mehl-gesamt").textContent = `${mehlGesamt.toFixed(1)} g`;
   document.getElementById("wasser-gesamt").textContent = `${wasserGesamt.toFixed(1)} g`;
   document.getElementById("roggenmehl-gesamt").textContent = `${roggenmehlGesamt.toFixed(1)} g`;
-
   document.getElementById("gs-roggenmehl").textContent = `${grundsauerMehl.toFixed(1)} g`;
   document.getElementById("vs-roggenmehl").textContent = `${vollsauerMehl.toFixed(1)} g`;
   document.getElementById("gs-anstellgut").textContent = `${anstellgutGrundsauer.toFixed(1)} g`;
-document.getElementById("gs-wasser").textContent = `${wasserGrundsauer.toFixed(1)} g`;
-document.getElementById("vs-wasser").textContent = `${wasserVollsauer.toFixed(1)} g`;
+  document.getElementById("gs-wasser").textContent = `${wasserGrundsauer.toFixed(1)} g`;
+  document.getElementById("vs-wasser").textContent = `${wasserVollsauer.toFixed(1)} g`;
+  document.getElementById("wasserHaupt").textContent = `${WasserHaupt.toFixed(1)} g`;
+  document.getElementById("roggenHaupt").textContent = `${RoggenHaupt.toFixed(1)} g`;
+  document.getElementById("weizenHaupt").textContent = `${WeizenHaupt.toFixed(1)} g`;
+  document.getElementById("salzHaupt").textContent = `${SalzHaupt.toFixed(1)} g`;
+  
+}
+)
+//Werte in Rezept übernehmen
 
-});
+document.querySelector(".werteUebernehmen").addEventListener("click", function () {
+anzahl = parseFloat(document.getElementById("anzahl").value); 
+
+var GrundsauerText = 
+"Grundsauer: \nAnstellgut:   " + (anstellgutGrundsauer * anzahl) +  "\nRoggenmehl:   " + grundsauerMehl * anzahl + "\nWasser:       " +  wasserGrundsauer * anzahl;
+
+var VollsauerText = 
+"\n\nVollsauer: \nGesamter Grundsauer " +  "\nRoggenmehl:   " + vollsauerMehl * anzahl + "\nWasser:       " +  wasserVollsauer * anzahl;
+
+var HauptrezeptText = 
+"\n\nHauprezept: \nGesamter Vollsauer " +  "\nRoggenmehl:   " + RoggenHaupt * anzahl + "\nWeizenmehl:   " +  WeizenHaupt * anzahl + "\nSalz:         " +  SalzHaupt * anzahl + "\nWasser:       " +  WasserHaupt * anzahl;
+
+
+document.getElementById("Text1").textContent = GrundsauerText + VollsauerText + HauptrezeptText;
+
+}
+
+
+);
 </script>
 
 

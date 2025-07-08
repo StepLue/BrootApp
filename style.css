@@ -103,7 +103,7 @@ button:hover {
     
     padding: 0rem;
     display: grid;
-    grid-template-columns: 3fr 2fr; /* 2/3 links, 1/3 rechts */
+    grid-template-columns: 3fr 3fr; /* 2/3 links, 1/3 rechts */
     gap: 1rem;
 
 }
@@ -115,6 +115,6 @@ button:hover {
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 6px;
-    height: 300px;;
+    height: 600px;;
     box-sizing: border-box;
 }
