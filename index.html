@@ -52,6 +52,7 @@
         <br>
         <input type="number" id="anzahl" placeholder="Anzahl der Brote" />
         <button class="werteUebernehmen">Werte in Rezept übernehmen</button>
+        <button class="screenshotBtn">als Bild speichern</button>
     </fieldset>
 
     <!-- Infobereich -->
@@ -130,7 +131,7 @@
   </div>
   
 
-
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -306,6 +307,21 @@ document.querySelector(".werteUebernehmen").addEventListener("click", function (
     console.error("Kopieren fehlgeschlagen:", err);
     alert("Fehler beim Kopieren in die Zwischenablage.");
   });
+
+
+document.getElementById("screenshotBtn").addEventListener("click", function () {
+  const textElement = document.getElementById("Text1");
+
+  html2canvas(textElement, {
+    backgroundColor: "#fff", // optional: weißer Hintergrund
+    scale: 2 // optional: bessere Auflösung
+  }).then(canvas => {
+    const link = document.createElement("a");
+    link.download = "rezept.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+
 });
 </script>
 
