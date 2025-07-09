@@ -308,7 +308,6 @@ document.querySelector(".werteUebernehmen").addEventListener("click", function (
     alert("Fehler beim Kopieren in die Zwischenablage.");
   });
 
-
 document.getElementById("screenshotBtn").addEventListener("click", function () {
   const textElement = document.getElementById("Text1");
 
@@ -321,7 +320,9 @@ document.getElementById("screenshotBtn").addEventListener("click", function () {
     link.href = canvas.toDataURL("image/png");
     link.click();
   });
+});
 
+  
 });
 </script>
 
