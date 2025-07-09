@@ -190,6 +190,7 @@ var WasserHaupt;
 var RoggenHaupt;
 var WeizenHaupt;
 var SalzHaupt;
+var wasserZvrm
 
 
 // berechnungen
@@ -212,6 +213,7 @@ document.querySelector(".berechnen").addEventListener("click", function () {
   const roggenmehlGesamt = mehlGesamt * (roggenanteil / 100);
 
   // Versäuerung
+
   const zvrm = roggenmehlGesamt * (versaeuerung / 100);
   grundsauerMehl = zvrm * 0.35;
   vollsauerMehl = zvrm * 0.65;
@@ -228,8 +230,12 @@ if (!isNaN(taGrundsauer) && taGrundsauer > 100) {
 
 const taVollsauer = parseFloat(document.getElementById("ta-vs").value);
 wasserVollsauer = 0;
+
 if (!isNaN(taVollsauer) && taVollsauer > 100) {
-  wasserVollsauer = vollsauerMehl * (taVollsauer - 100) / 100;
+  wasserZvrm = zvrm * (taVollsauer - 100) /100
+
+
+  wasserVollsauer = wasserZvrm - wasserGrundsauer;
 }
 
 
@@ -255,27 +261,52 @@ if (!isNaN(taVollsauer) && taVollsauer > 100) {
   
 }
 )
-//Werte in Rezept übernehmen
-
 document.querySelector(".werteUebernehmen").addEventListener("click", function () {
-anzahl = parseFloat(document.getElementById("anzahl").value); 
+  anzahl = parseFloat(document.getElementById("anzahl").value);
+  const rezeptName = document.getElementById("rezeptname").value.trim();
 
-var GrundsauerText = 
-"Grundsauer: \nAnstellgut:   " + (anstellgutGrundsauer * anzahl) +  "\nRoggenmehl:   " + grundsauerMehl * anzahl + "\nWasser:       " +  wasserGrundsauer * anzahl;
+  if (isNaN(anzahl) || anzahl <= 0) {
+    alert("Bitte eine gültige Anzahl an Broten eingeben.");
+    return;
+  }
 
-var VollsauerText = 
-"\n\nVollsauer: \nGesamter Grundsauer " +  "\nRoggenmehl:   " + vollsauerMehl * anzahl + "\nWasser:       " +  wasserVollsauer * anzahl;
+  function g(val) {
+    return (val * anzahl).toFixed(1) + " g";
+  }
 
-var HauptrezeptText = 
-"\n\nHauprezept: \nGesamter Vollsauer " +  "\nRoggenmehl:   " + RoggenHaupt * anzahl + "\nWeizenmehl:   " +  WeizenHaupt * anzahl + "\nSalz:         " +  SalzHaupt * anzahl + "\nWasser:       " +  WasserHaupt * anzahl;
+  const grundsauerText =
+    "Grundsauer:\n" +
+    "  • Anstellgut:     " + g(anstellgutGrundsauer) + "\n" +
+    "  • Roggenmehl:     " + g(grundsauerMehl) + "\n" +
+    "  • Wasser:         " + g(wasserGrundsauer);
 
+  const vollsauerText =
+    "\n\nVollsauer:\n" +
+    "  • Roggenmehl:     " + g(vollsauerMehl) + "\n" +
+    "  • Wasser:         " + g(wasserVollsauer);
 
-document.getElementById("Text1").textContent = GrundsauerText + VollsauerText + HauptrezeptText;
+  const hauptrezeptText =
+    "\n\nHauptteig:\n" +
+    "  • Roggenmehl:     " + g(RoggenHaupt) + "\n" +
+    "  • Weizenmehl:     " + g(WeizenHaupt) + "\n" +
+    "  • Salz:           " + g(SalzHaupt) + "\n" +
+    "  • Wasser:         " + g(WasserHaupt);
 
-}
+  const header = rezeptName ? `Rezept: ${rezeptName}\nAnzahl Brote: ${anzahl}\n\n` : "";
 
+  const finalText = header + grundsauerText + vollsauerText + hauptrezeptText;
 
-);
+  // In Textfeld einfügen
+  document.getElementById("Text1").value = finalText;
+
+  // In Zwischenablage kopieren
+  navigator.clipboard.writeText(finalText).then(() => {
+    console.log("Rezepttext wurde in die Zwischenablage kopiert.");
+  }).catch(err => {
+    console.error("Kopieren fehlgeschlagen:", err);
+    alert("Fehler beim Kopieren in die Zwischenablage.");
+  });
+});
 </script>
 
 
