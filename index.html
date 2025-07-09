@@ -130,7 +130,7 @@
 
   </div>
   
-
+<div id="rezeptbild" style="display:none; white-space:pre-wrap; font-family:monospace; padding:10px; border:1px solid #ccc; width:200px;"></div>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <script>
@@ -263,67 +263,53 @@ if (!isNaN(taVollsauer) && taVollsauer > 100) {
 }
 )
 document.querySelector(".werteUebernehmen").addEventListener("click", function () {
-  anzahl = parseFloat(document.getElementById("anzahl").value);
-  const rezeptName = document.getElementById("rezeptname").value.trim();
+  anzahl = parseFloat(document.getElementById("anzahl").value); 
 
-  if (isNaN(anzahl) || anzahl <= 0) {
-    alert("Bitte eine gültige Anzahl an Broten eingeben.");
-    return;
-  }
-
-  function g(val) {
-    return (val * anzahl).toFixed(1) + " g";
-  }
-
-  const grundsauerText =
+  var GrundsauerText = 
     "Grundsauer:\n" +
-    "  • Anstellgut:     " + g(anstellgutGrundsauer) + "\n" +
-    "  • Roggenmehl:     " + g(grundsauerMehl) + "\n" +
-    "  • Wasser:         " + g(wasserGrundsauer);
+    "Anstellgut:\t" + (anstellgutGrundsauer * anzahl).toFixed(1) + " g\n" +
+    "Roggenmehl:\t" + (grundsauerMehl * anzahl).toFixed(1) + " g\n" +
+    "Wasser:\t\t" + (wasserGrundsauer * anzahl).toFixed(1) + " g";
 
-  const vollsauerText =
+  var VollsauerText = 
     "\n\nVollsauer:\n" +
-    "  • Roggenmehl:     " + g(vollsauerMehl) + "\n" +
-    "  • Wasser:         " + g(wasserVollsauer);
+    "Roggenmehl:\t" + (vollsauerMehl * anzahl).toFixed(1) + " g\n" +
+    "Wasser:\t\t" + (wasserVollsauer * anzahl).toFixed(1) + " g";
 
-  const hauptrezeptText =
-    "\n\nHauptteig:\n" +
-    "  • Roggenmehl:     " + g(RoggenHaupt) + "\n" +
-    "  • Weizenmehl:     " + g(WeizenHaupt) + "\n" +
-    "  • Salz:           " + g(SalzHaupt) + "\n" +
-    "  • Wasser:         " + g(WasserHaupt);
+  var HauptrezeptText = 
+    "\n\nHauptrezept:\n" +
+    "Roggenmehl:\t" + (RoggenHaupt * anzahl).toFixed(1) + " g\n" +
+    "Weizenmehl:\t" + (WeizenHaupt * anzahl).toFixed(1) + " g\n" +
+    "Salz:\t\t" + (SalzHaupt * anzahl).toFixed(1) + " g\n" +
+    "Wasser:\t\t" + (WasserHaupt * anzahl).toFixed(1) + " g";
 
-  const header = rezeptName ? `Rezept: ${rezeptName}\nAnzahl Brote: ${anzahl}\n\n` : "";
-
-  const finalText = header + grundsauerText + vollsauerText + hauptrezeptText;
+  const fullText = GrundsauerText + VollsauerText + HauptrezeptText;
 
   // In Textfeld einfügen
-  document.getElementById("Text1").value = finalText;
+  document.getElementById("Text1").textContent = fullText;
 
   // In Zwischenablage kopieren
-  navigator.clipboard.writeText(finalText).then(() => {
-    console.log("Rezepttext wurde in die Zwischenablage kopiert.");
-  }).catch(err => {
-    console.error("Kopieren fehlgeschlagen:", err);
-    alert("Fehler beim Kopieren in die Zwischenablage.");
-  });
+  navigator.clipboard.writeText(fullText);
 
-document.getElementById("screenshotBtn").addEventListener("click", function () {
-  const textElement = document.getElementById("Text1");
+  // In verstecktes div kopieren für Screenshot
+  const bildDiv = document.getElementById("rezeptbild");
+  bildDiv.textContent = fullText;
+  bildDiv.style.display = "block";
 
-  html2canvas(textElement, {
-    backgroundColor: "#fff", // optional: weißer Hintergrund
-    scale: 2 // optional: bessere Auflösung
-  }).then(canvas => {
+  // Screenshot erstellen
+  html2canvas(bildDiv).then(canvas => {
     const link = document.createElement("a");
     link.download = "rezept.png";
-    link.href = canvas.toDataURL("image/png");
+    link.href = canvas.toDataURL();
     link.click();
+
+    // Div wieder verstecken
+    bildDiv.style.display = "none";
   });
 });
 
   
-});
+
 </script>
 
 
