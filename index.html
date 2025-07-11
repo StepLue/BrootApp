@@ -70,8 +70,8 @@
       <!-- Grundsauer (wird ein-/ausgeblendet) -->
       <fieldset class="fieldset-design" id="grundsauer">
         <legend>Grundsauer</legend>
-        <div><input type="text" placeholder="Temperatur und Zeit" /></div>
-        <div><input type="text" id="ta-gs" placeholder="TA z.B. 200" /></div>
+        <div ><input type="text" value="25°; 12-15h" id="TempTimeGS" /></div>
+        <div><input type="text" id="ta-gs" value="160" /></div>
         <div>Anstellgut:</div>
         <div id="gs-anstellgut">wird berechnet</div>
         <div>Roggenmehl:</div>
@@ -82,8 +82,8 @@
 
       <fieldset class="fieldset-design">
         <legend>Vollsauer</legend>
-        <div><input type="text" placeholder="Temperatur und Zeit" /></div>
-        <div><input type="text" id="ta-vs" placeholder="TA z.B. 260" /></div>
+        <div><input type="text" value="32°, 3h" id="TempTimeVS" /></div>
+        <div><input type="text" id="ta-vs" value="200" /></div>
         <div id="vs-anstellgut-label">Anstellgut:</div>
         <div id="vs-anstellgut-wert">wird berechnet</div>
         <div>Roggenmehl:</div>
@@ -131,7 +131,7 @@
   </div>
   
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -191,7 +191,9 @@ var WasserHaupt;
 var RoggenHaupt;
 var WeizenHaupt;
 var SalzHaupt;
-var wasserZvrm
+var wasserZvrm;
+var temptimeGS;
+var temptimeVS;
 
 
 // berechnungen
@@ -262,9 +264,15 @@ if (!isNaN(taVollsauer) && taVollsauer > 100) {
   
 }
 )
+
+
+
+
 document.querySelector(".werteUebernehmen").addEventListener("click", function () {
   anzahl = parseFloat(document.getElementById("anzahl").value);
   const rezeptName = document.getElementById("rezeptname").value.trim();
+  temptimeGS = document.getElementById("TempTimeGS").value; 
+  temptimeVS = document.getElementById("TempTimeVS").value;
 
   if (isNaN(anzahl) || anzahl <= 0) {
     alert("Bitte eine gültige Anzahl an Broten eingeben.");
@@ -275,38 +283,40 @@ document.querySelector(".werteUebernehmen").addEventListener("click", function (
     return (val * anzahl).toFixed(1) + " g";
   }
 
+    const header =
+    "Rezeptinfos:\n" +
+    "  • Rezeptname:        " + rezeptName + "\n" +
+    "  • Teigeinlage:       " + teigeinlage + "\n" +
+    "  • Anzahl Brote       " + anzahl + "\n" +
+    "  • Teigausbeute:      " + teigausbeute + "\n" +
+    "  • Roggen in %:       " + roggenanteil + "\n" +
+    "  • Versäuerung in %:  " + versaeuerung + "\n";
+
+  
   const grundsauerText =
-    "Grundsauer:\n" +
-    "  • Anstellgut:     " + g(anstellgutGrundsauer) + "\n" +
-    "  • Roggenmehl:     " + g(grundsauerMehl) + "\n" +
-    "  • Wasser:         " + g(wasserGrundsauer);
+    "\n\nGrundsauer: " + temptimeGS + "    \n"     +
+    "  • Anstellgut:        " + g(anstellgutGrundsauer) + "\n" +
+    "  • Roggenmehl:        " + g(grundsauerMehl) + "\n" +
+    "  • Wasser:            " + g(wasserGrundsauer);
 
   const vollsauerText =
-    "\n\nVollsauer:\n" +
-    "  • Roggenmehl:     " + g(vollsauerMehl) + "\n" +
-    "  • Wasser:         " + g(wasserVollsauer);
+    "\n\nVollsauer: " + temptimeVS + "    \n"     +
+    "  • Roggenmehl:        " + g(vollsauerMehl) + "\n" +
+    "  • Wasser:            " + g(wasserVollsauer);
 
   const hauptrezeptText =
     "\n\nHauptteig:\n" +
-    "  • Roggenmehl:     " + g(RoggenHaupt) + "\n" +
-    "  • Weizenmehl:     " + g(WeizenHaupt) + "\n" +
-    "  • Salz:           " + g(SalzHaupt) + "\n" +
-    "  • Wasser:         " + g(WasserHaupt);
+    "  • Roggenmehl:        " + g(RoggenHaupt) + "\n" +
+    "  • Weizenmehl:        " + g(WeizenHaupt) + "\n" +
+    "  • Salz:              " + g(SalzHaupt) + "\n" +
+    "  • Wasser:            " + g(WasserHaupt);
 
-  const header = rezeptName ? `Rezept: ${rezeptName}\nAnzahl Brote: ${anzahl}\n\n` : "";
+  //const header = rezeptName ? `Rezept: ${rezeptName}\nAnzahl Brote: ${anzahl}\n\n` : "";
 
   const finalText = header + grundsauerText + vollsauerText + hauptrezeptText;
 
-  // In Textfeld einfügen
   document.getElementById("Text1").value = finalText;
 
-  // In Zwischenablage kopieren
-  navigator.clipboard.writeText(finalText).then(() => {
-    console.log("Rezepttext wurde in die Zwischenablage kopiert.");
-  }).catch(err => {
-    console.error("Kopieren fehlgeschlagen:", err);
-    alert("Fehler beim Kopieren in die Zwischenablage.");
-  });
 
   
 });
