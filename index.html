@@ -318,6 +318,12 @@ document.querySelector(".werteUebernehmen").addEventListener("click", function (
   document.getElementById("Text1").value = finalText;
 
 
+// in zwischenablage kopiert
+navigator.clipboard.writeText(finalText).then(() => {
+    console.log("Rezepttext wurde in die Zwischenablage kopiert.");
+  }).catch(err => {
+    console.error("Kopieren fehlgeschlagen:", err);
+    alert("Fehler beim Kopieren in die Zwischenablage.");
   
 });
 </script>
